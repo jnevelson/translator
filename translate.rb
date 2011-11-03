@@ -7,9 +7,11 @@ def translate_hash(hash)
       case v
       when Hash
         hsh[k] = translate_hash(v)
+      when Array
+        hsh[k] = v.map { |a| translate(a) }
       else
         begin
-          tr = @translator.translate(:en, @locale, v)[0].force_encoding('utf-8')
+          tr = translate(v)
           puts "#{@counter+=1}. #{v} -- #{tr}"
           hsh[k] = tr
         rescue Exception => e
@@ -18,6 +20,10 @@ def translate_hash(hash)
       end
     end
   end
+end
+
+def translate(word)
+  @translator.translate(:en, @locale, word)[0].force_encoding('utf-8')
 end
 
 @locale = ARGV[0]
